@@ -3,13 +3,11 @@ function [ log_like ] = getGaussianMixLogLikelihood( x, theta )
 
 split = (1:2) * round(length(theta)/3);
 
-tot_ = (sum(theta((split(2)+1):end)) == 1);
-
 mus = theta(1:split(1));
 sigmas = theta((split(1)+1):split(2));
 ws = theta((split(2)+1):end);
 
-if (mod(length(theta), 3) == 0 && tot_)
+if (mod(length(theta), 3) == 0 && sum(ws) == 1)
     
     like_ = zeros(size(x));
  

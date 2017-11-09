@@ -115,11 +115,17 @@ p_mixture = 1/3;
 w1 = p_mixture;
 w2 = 1 - p_mixture;
 
-mu1 = 3.4;
-sigma12 = 1.2;
+% mu1 = 3.4;
+% sigma12 = 1.2;
+% 
+% mu2 = 1.2;
+% sigma22 = 3;
 
-mu2 = 1.2;
-sigma22 = 3;
+mu1 = 3;
+sigma12 = 1;
+
+mu2 = -0.5;
+sigma22 = 2;
 
 mu = [mu1; mu2];
 sigma = cat(3, (sigma12), (sigma22));
@@ -258,6 +264,55 @@ sigma22_fitgm = GMModel.Sigma(:, :, 2);
 
 % 10.-Use your own EM algorithm to estimate the Gaussian mixture model. EM
 % is used in fitgmdist but the goal is to implement it on our own
+
+precision = 0.1;
+
+theta_em = fitMixedGaussianEMmono(Gauss_mix_sample, theta, precision);
+
+mu1_em = theta_em(1);
+mu2_em = theta_em(2);
+sigma12_em = theta_em(3);
+sigma22_em = theta_em(4);
+w1_em = theta_em(5);
+w2_em = theta_em(6);
+
+figure(4)
+
+hold on
+
+granularity = 100;
+
+h = histogram(Gauss_mix_sample, floor(granularity/3), 'Normalization', 'pdf');
+alpha(h, 0.2)
+
+% Plot both the Gaussian pdf with realtive weight:
+pdf_1 = makedist('Normal', mu1, sqrt(sigma12));
+pdf_2 = makedist('Normal', mu2, sqrt(sigma22));
+
+x = linspace(mean_mixture - 3*sqrt(sigma2_mixture), mean_mixture + 3*sqrt(sigma2_mixture), granularity);
+
+y1 = w1*pdf(pdf_1, x);
+y2 = w2*pdf(pdf_2, x);
+
+y_mixed = y1 + y2;
+
+p1 = plot(x, y1, 'LineWidth', 1.5, 'LineStyle', '--');
+p2 = plot(x, y2, 'LineWidth', 1.5, 'LineStyle', '--');
+p3 = plot(x, y_mixed, 'LineWidth', 1.5, 'LineStyle', '--');
+
+% Plot the MLE Gaussian pdfs with relative weigth:
+pdf_1_em = makedist('Normal', mu1_em, sqrt(sigma12_em));
+pdf_2_em = makedist('Normal', mu2_em, sqrt(sigma22_em));
+
+y1_em = w1_em*pdf(pdf_1_mle, x);
+y2_em = w2_em*pdf(pdf_2_mle, x);
+y_mixed_em = y1_em + y2_em;
+
+p1_ = plot(x, y1_em, 'LineWidth', 2);
+p2_ = plot(x, y2_em, 'LineWidth', 2);
+p3_ = plot(x, y_mixed_em, 'LineWidth', 2);
+
+hold off
 
 
 % 11.-Extend the codes to the case of bivariate Gaussian till the next
