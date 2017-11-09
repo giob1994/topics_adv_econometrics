@@ -24,7 +24,7 @@ rng default;
 % (1) using no built-in special functions
 % (2) using Matlab function gmdistribution
 
-n = 10000;
+n = 1000;
 p_mixture = 1/3;
 
 w1 = p_mixture;
@@ -109,7 +109,7 @@ hold off
 
 % Case 1 - means are close to each other:
 
-n = 10000;
+n = 8000;
 p_mixture = 1/3;
 
 w1 = p_mixture;
@@ -162,8 +162,7 @@ hold off
 
 theta = [mu1, mu2, sigma12, sigma22, w1, w2];
 
-loglikeValBiComp = getGaussianMixLogLikBicomp(Gauss_mix_sample, theta)
-
+loglikeValBiComp = getGaussianMixLogLikBicomp(Gauss_mix_sample, theta);
 
 % 6.-Create a function getGaussianMixLogLikelihood(x, theta) that evaluates the
 % Gaussian Mixture Log-likelihood for any number of components at a sample x 
@@ -171,8 +170,13 @@ loglikeValBiComp = getGaussianMixLogLikBicomp(Gauss_mix_sample, theta)
 % verify that it works the same as the previous function provided that the
 % number of components is 2
 
-% loglikeValBiCompCheck = getGaussianMixLogLikelihood(Gauss_mix_sample, theta)
+loglikeValBiCompCheck = getGaussianMixLogLikelihood(Gauss_mix_sample, theta);
 
+if (loglikeValBiComp == loglikeValBiCompCheck)
+    disp(' [ Log-likelihood calculations are consistent ]')
+else
+    error(' [ "getGaussianMixLogLikelihood( )" incorrectly defined ]')
+end
 
 % 7.-Fit a Gaussian Mixture to the simulated sample by maximizing the log-likelihood
 % Enforce in the maximization process the positivity of the variances and
@@ -181,14 +185,76 @@ loglikeValBiComp = getGaussianMixLogLikBicomp(Gauss_mix_sample, theta)
 loglikeF = @(theta) -getGaussianMixLogLikBicomp(Gauss_mix_sample, theta);
 options = optimoptions(@fmincon, 'Display', 'iter');
 
+x0 = [0, 0, 1, 1, 1/2, 1/2];
+Aeq = [0, 0, 0, 0, 1, 1];
+beq = 1;
+lb = [-Inf, -Inf, 0, 0, 0, 0];
+ub = [Inf, Inf, Inf, Inf, 1, 1];
 
+[theta_mle, log_like_mle] = ...
+    fmincon(loglikeF, x0, [], [], Aeq, beq, lb, ub, [], options);
+
+mu1_mle = theta_mle(1);
+mu2_mle = theta_mle(2);
+sigma12_mle = theta_mle(3);
+sigma22_mle = theta_mle(4);
+w1_mle = theta_mle(5);
+w2_mle = theta_mle(6);
 
 % 8.-Plot in the same figure the original (used for data generation) and the ML-estimated Gaussian mixture
 % Experiment and observe how they become closer as the the sample size grows
 
+figure(3)
+
+hold on
+
+granularity = 100;
+
+h = histogram(Gauss_mix_sample, floor(granularity/3), 'Normalization', 'pdf');
+alpha(h, 0.2)
+
+% Plot both the Gaussian pdf with realtive weight:
+pdf_1 = makedist('Normal', mu1, sqrt(sigma12));
+pdf_2 = makedist('Normal', mu2, sqrt(sigma22));
+
+x = linspace(mean_mixture - 3*sqrt(sigma2_mixture), mean_mixture + 3*sqrt(sigma2_mixture), granularity);
+
+y1 = w1*pdf(pdf_1, x);
+y2 = w2*pdf(pdf_2, x);
+
+y_mixed = y1 + y2;
+
+p1 = plot(x, y1, 'LineWidth', 1.5, 'LineStyle', '--');
+p2 = plot(x, y2, 'LineWidth', 1.5, 'LineStyle', '--');
+p3 = plot(x, y_mixed, 'LineWidth', 1.5, 'LineStyle', '--');
+
+% Plot the MLE Gaussian pdfs with relative weigth:
+pdf_1_mle = makedist('Normal', mu1_mle, sqrt(sigma12_mle));
+pdf_2_mle = makedist('Normal', mu2_mle, sqrt(sigma22_mle));
+
+y1_mle = w1_mle*pdf(pdf_1_mle, x);
+y2_mle = w2_mle*pdf(pdf_2_mle, x);
+y_mixed_mle = y1_mle + y2_mle;
+
+p1_ = plot(x, y1_mle, 'LineWidth', 2);
+p2_ = plot(x, y2_mle, 'LineWidth', 2);
+p3_ = plot(x, y_mixed_mle, 'LineWidth', 2);
+
+hold off
 
 % 9.-Use matlab function fitgmdist to fit a Gaussian Mixture to the simulated sample
 
+rng(1)
+
+k = 2;
+ops = statset('Display','final','MaxIter',1500,'TolFun',1e-5);
+
+GMModel = fitgmdist(Gauss_mix_sample, k, 'Options', ops);
+
+mu1_fitgm = GMModel.mu(1);
+mu2_fitgm = GMModel.mu(2);
+sigma12_fitgm = GMModel.Sigma(:, :, 1);
+sigma22_fitgm = GMModel.Sigma(:, :, 2);
 
 % 10.-Use your own EM algorithm to estimate the Gaussian mixture model. EM
 % is used in fitgmdist but the goal is to implement it on our own

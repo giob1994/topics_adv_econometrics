@@ -1,19 +1,27 @@
 function [ log_like ] = getGaussianMixLogLikelihood( x, theta )
 % Returns the log-likelihood of a Gaussian Mixture
 
-tot_w = sum(floor(theta(2*length(theta)/3:end)))
+split = (1:2) * round(length(theta)/3);
 
-if (mod(length(theta), 3) == 0 && tot_w == 1)
+tot_ = (sum(theta((split(2)+1):end)) == 1);
+
+mus = theta(1:split(1));
+sigmas = theta((split(1)+1):split(2));
+ws = theta((split(2)+1):end);
+
+if (mod(length(theta), 3) == 0 && tot_)
     
-    log_like = 0;
+    like_ = zeros(size(x));
  
-    for i = 1:floor(length(theta)/3)
+    for i = 1:round(length(theta)/3)
     
-        pdf_tmp = makedist('Normal', theta(i), sqrt(theta(i+2)));
+        pdf_tmp = makedist('Normal', mus(i), sqrt(sigmas(i)));
     
-        log_like = log_like + sum(log(theta(i+4)*pdf(pdf_tmp, x)));
+        like_ = like_ + ws(i)*pdf(pdf_tmp, x);
     
     end
+    
+    log_like = sum(log(like_));
     
 else
    
