@@ -109,7 +109,11 @@ hold off
 
 % Case 1 - means are close to each other:
 
-n = 8000;
+% n = 1000;
+% n = 5000;
+% n = 8000;
+n = 10000;
+
 p_mixture = 1/3;
 
 w1 = p_mixture;
@@ -265,7 +269,7 @@ sigma22_fitgm = GMModel.Sigma(:, :, 2);
 % 10.-Use your own EM algorithm to estimate the Gaussian mixture model. EM
 % is used in fitgmdist but the goal is to implement it on our own
 
-precision = 0.1;
+precision = 0.01;
 
 theta_em = fitMixedGaussianEMmono(Gauss_mix_sample, theta, precision);
 

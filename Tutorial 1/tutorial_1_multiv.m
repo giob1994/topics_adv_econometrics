@@ -46,6 +46,7 @@ title('Separate samples')
 plot(gauss_sample_1(:,1), gauss_sample_1(:,2), 'b+')
 plot(gauss_sample_2(:,1), gauss_sample_2(:,2), 'ro')
 grid on
+pbaspect([2 2 1])
 hold off
 
 subplot(1,2,2)
@@ -53,10 +54,12 @@ hold on
 title('Mixed sample')
 plot(Gauss_mix_sample(:,1), Gauss_mix_sample(:,2), 'kx')
 grid on
+pbaspect([2 2 1])
 hold off
 
 
 figure(2)
+ax2 = subplot(1,2,1);
 hold on
 
 granularity = 100;
@@ -85,12 +88,16 @@ shading interp
 colormap jet
 % mesh(x1, x2, y_mixed);
 pbaspect([1 1 0.5])
+xlim([-6, 6])
+ylim([-6, 6])
+xlim
 view(3)
 grid on
 
 hold off
 
-figure(3)
+% figure(3)
+ax1 = subplot(1,2,2);
 hold on
 
 s1 = surf(x1, x2, y1, 'FaceAlpha', 0.5);
@@ -98,10 +105,16 @@ s1 = surf(x1, x2, y2, 'FaceAlpha', 0.5);
 colormap jet
 % shading flat
 pbaspect([1 1 0.5])
+xlim([-6, 6])
+ylim([-6, 6])
 view(3)
 grid on
 
 hold off
+
+hlink = linkprop([ax1,ax2],{'CameraPosition','CameraUpVector'});
+addprop(hlink,'PlotBoxAspectRatio')
+rotate3d on
 
 
 
