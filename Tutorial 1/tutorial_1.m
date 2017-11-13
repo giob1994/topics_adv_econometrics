@@ -65,7 +65,7 @@ Gauss_mix_sample = random(obj, n);
 % versions of the two Gaussians used in the simulation, and the Gaussian
 % mixture distribution; all the pdf's need to be written explicitly
 
-mean_mixture = w1*mu1 + w2+mu2;
+mean_mixture = w1*mu1 + w2*mu2;
 sigma2_mixture = w1*((mu1 - mean_mixture)^2+sigma12) + ...
                     w2*((mu2 - mean_mixture)^2+sigma22);
 
@@ -133,7 +133,7 @@ p = [w1; w2];
 obj = gmdistribution(mu, sigma, p);
 Gauss_mix_sample = random(obj, n);
 
-mean_mixture = w1*mu1 + w2+mu2;
+mean_mixture = w1*mu1 + w2*mu2;
 sigma2_mixture = w1*((mu1 - mean_mixture)^2+sigma12) + ...
                     w2*((mu2 - mean_mixture)^2+sigma22);
                 
