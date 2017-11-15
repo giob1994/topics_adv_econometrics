@@ -38,6 +38,9 @@ gauss_sample_2 = mvnrnd(mu2, sigma22, n_component2);
 
 Gauss_mix_sample = [gauss_sample_1; gauss_sample_2];
 
+
+% Plot the 2D distribution of the sample:
+
 figure(1)
 
 subplot(1,2,1)
@@ -57,6 +60,9 @@ grid on
 pbaspect([2 2 1])
 hold off
 
+
+% Plot in 3D the histogram of the sample, the theoretical mixed 
+% distribution and also the two original (weigthed) distributions:
 
 figure(2)
 ax2 = subplot(1,2,1);
@@ -88,11 +94,12 @@ shading interp
 colormap jet
 % mesh(x1, x2, y_mixed);
 pbaspect([1 1 0.5])
-xlim([-6, 6])
-ylim([-6, 6])
-xlim
+xlim([-6, 6]);
+ylim([-6, 6]);
 view(3)
 grid on
+
+title('Sample histogram - Mixed PDF')
 
 hold off
 
@@ -105,10 +112,12 @@ s1 = surf(x1, x2, y2, 'FaceAlpha', 0.5);
 colormap jet
 % shading flat
 pbaspect([1 1 0.5])
-xlim([-6, 6])
-ylim([-6, 6])
+xlim([-6, 6]);
+ylim([-6, 6]);
 view(3)
 grid on
+
+title('Weigthed PDFs')
 
 hold off
 
@@ -117,5 +126,92 @@ addprop(hlink,'PlotBoxAspectRatio')
 rotate3d on
 
 
+% Use Maximum Likelihood estimation to fit the sample:
+
+mus = [mu1; mu2];
+sigmas = zeros([size(sigma12), 2]);
+sigmas(:,:,1) = sigma12;
+sigmas(:,:,2) = sigma22;
+
+theta = struct('n', 2,...
+               'mu', mus,...
+               'sigma', sigmas,...
+               'w', [w1, w2]);
+           
+% getMultiGaussianMixLogLikelihood(Gauss_mix_sample, theta)
+
+loglikeF = @(th) -getMultiGaussianMixLogLikelihood(Gauss_mix_sample, th);
+
+x0 = [2,...
+      0, 0, 0, 0,...
+      1, 0, 0, 1, 1, 0, 0, 1,...
+      1/2, 1/2];
+Aeq = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1];
+beq = 1;
+lb = [2,...
+      -Inf, -Inf, -Inf, -Inf,...
+      0, 0, 0, 0, 0, 0, 0, 0,...
+      0, 0];
+ub = [2,...
+      Inf, Inf, Inf, Inf,...
+      Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,...
+      1, 1];
+options = optimoptions(@fmincon, 'Display', 'iter');
+
+% [theta_mle, log_like_mle] = ...
+%     fmincon(loglikeF, x0, [], [], Aeq, beq, lb, ub, [], options);
+
+% MLE using the built-in fitting Toolbox:
+
+k = 2;
+ops = statset('Display','final','MaxIter',1500,'TolFun',1e-5);
+
+GMModel = fitgmdist(Gauss_mix_sample, k, 'Options', ops);
+
+mu1_fitgm = GMModel.mu(1);
+mu2_fitgm = GMModel.mu(2);
+sigma12_fitgm = GMModel.Sigma(:, :, 1);
+sigma22_fitgm = GMModel.Sigma(:, :, 2);
+w1_fitgm = GMModel.ComponentProportion(1);
+w2_fitgm = GMModel.ComponentProportion(2);
+
+figure(3)
+hold on
+
+granularity = 100;
+
+h = histogram2(Gauss_mix_sample(:,1), Gauss_mix_sample(:,2),...
+    floor(granularity/3), 'Normalization', 'pdf', 'FaceAlpha', 0.2);
+
+% Plot:
+                
+x1 = linspace(min(Gauss_mix_sample(:,1))-1, ...
+                max(Gauss_mix_sample(:,1))+1, granularity/3);
+x2 = linspace(min(Gauss_mix_sample(:,2))-1, ...
+                max(Gauss_mix_sample(:,2))+1, granularity/3);
+[X1, X2] = meshgrid(x1,x2);
+
+y1 = w1_fitgm*reshape(mvnpdf([X1(:), X2(:)],...
+    mu1_fitgm, sigma12_fitgm), length(x1), length(x2));
+y2 = w2_fitgm*reshape(mvnpdf([X1(:), X2(:)],...
+    mu2_fitgm, sigma22_fitgm), length(x1), length(x2));
+
+y_mixed = y1 + y2;
+                
+surf(x1, x2, y_mixed, 'FaceAlpha', 0.7);
+shading interp
+colormap jet
+pbaspect([1 1 0.5])
+xlim([-6, 6]);
+ylim([-6, 6]);
+view(3)
+grid on
+rotate3d on
+
+title('MLE estimation')
+
+hold off
+
+% EM algorithm for multidimensional case:
 
 
