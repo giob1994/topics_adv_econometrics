@@ -159,7 +159,7 @@ ub = [2,...
 options = optimoptions(@fmincon, 'Display', 'iter');
 
 % [theta_mle, log_like_mle] = ...
-%     fmincon(loglikeF, x0, [], [], Aeq, beq, lb, ub, [], options);
+%   fmincon(loglikeF, x0, [], [], Aeq, beq, lb, ub, [], options);
 
 % MLE using the built-in fitting Toolbox:
 
@@ -174,6 +174,7 @@ sigma12_fitgm = GMModel.Sigma(:, :, 1);
 sigma22_fitgm = GMModel.Sigma(:, :, 2);
 w1_fitgm = GMModel.ComponentProportion(1);
 w2_fitgm = GMModel.ComponentProportion(2);
+
 
 figure(3)
 hold on
@@ -198,7 +199,7 @@ y2 = w2_fitgm*reshape(mvnpdf([X1(:), X2(:)],...
 
 y_mixed = y1 + y2;
                 
-surf(x1, x2, y_mixed, 'FaceAlpha', 0.7);
+sax1 = surf(x1, x2, y_mixed, 'FaceAlpha', 0.7);
 shading interp
 colormap jet
 pbaspect([1 1 0.5])
@@ -214,4 +215,57 @@ hold off
 
 % EM algorithm for multidimensional case:
 
+precision = 0.000001;
+
+theta_0 = [2,...
+           0.8, 0, -0.4, 2,...
+           1.2, 0, 0, 0.5, 1, 0, 0, 3,...
+           1/3, 2/3];
+
+theta_em = fitMultiMixedGaussianEM(Gauss_mix_sample, theta_0, precision);
+
+mu1_em = theta_em.mu(1,:);
+mu2_em = theta_em.mu(2,:);
+sigma12_em = theta_em.sigma(:,:,1);
+sigma22_em = theta_em.sigma(:,:,1);
+w1_em = theta.w(1);
+w2_em = theta.w(2);
+
+
+figure(4)
+hold on
+
+granularity = 100;
+
+h = histogram2(Gauss_mix_sample(:,1), Gauss_mix_sample(:,2),...
+    floor(granularity/3), 'Normalization', 'pdf', 'FaceAlpha', 0.2);
+
+% Plot:
+                
+x1 = linspace(min(Gauss_mix_sample(:,1))-1, ...
+                max(Gauss_mix_sample(:,1))+1, granularity/3);
+x2 = linspace(min(Gauss_mix_sample(:,2))-1, ...
+                max(Gauss_mix_sample(:,2))+1, granularity/3);
+[X1, X2] = meshgrid(x1,x2);
+
+y1 = w1_em*reshape(mvnpdf([X1(:), X2(:)],...
+    mu1_em, sigma12_em), length(x1), length(x2));
+y2 = w2_em*reshape(mvnpdf([X1(:), X2(:)],...
+    mu2_em, sigma22_em), length(x1), length(x2));
+
+y_mixed = y1 + y2;
+                
+sax2 = surf(x1, x2, y_mixed, 'FaceAlpha', 0.7);
+shading interp
+colormap jet
+pbaspect([1 1 0.5])
+xlim([-6, 6]);
+ylim([-6, 6]);
+view(3)
+grid on
+rotate3d on
+
+title('EM algorithm estimation')
+
+hold off
 

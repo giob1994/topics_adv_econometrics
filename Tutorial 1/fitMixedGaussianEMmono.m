@@ -40,7 +40,7 @@ while ((norm(mus_em-mus)+norm(sigmas_em-sigmas)+norm(ws_em-ws)) > ep_)
 
 end
 
-% Concatenate EM results intoo output vector:
+% Concatenate EM results into output vector:
 theta_em = [mus_em(:)', sigmas_em(:)', ws_em(:)'];
 
 end
