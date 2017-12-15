@@ -1,0 +1,51 @@
+% The objective of this code is simulating out of a 2-dimensional Gaussian mixture
+% model and fitting a Gaussian mixture distribution to a
+% data set by maximizing the log-likelihood, using Expectation-Maximization
+% (EM)  algorithm and built-in matlab function with implemented EM
+
+% We extend here the code to the case of mixture of two-dimensional 
+% Gaussian distributions
+
+% Start with number of components n_components = 2;
+% Variables:
+% n sample size
+% mu1, mu2 means of the Gaussians used in the mixture
+% sigma12, sigma22 variances of the Gaussians used in the mixture
+% w1, w2 weights for each component of the mixture
+
+
+% 1.-Generate a Gaussian mixture distributed sample of size n of means mu1, mu2,
+% variances sigma12 and sigma22, and mixing weights w1, w2
+% (a) using no built-in special functions
+% using Matlab functions: (b) binornd, (c) gmdistribution
+
+% we need to simulate 
+% {X|Y=1}~N(mu_1, Sigma_1)
+% {X|Y=0}~N(mu_0, Sigma_0)
+
+
+% 2.- (a) Create a 2D scatter plot that represents the simulated data. 
+% Denote the observations from the class Y=1 with the symbol '+'
+% and with 'o' the observations from the class Y=0
+% (b) Plot weighted
+% versions of the two Gaussians used in the simulation, and the Gaussian
+% mixture distribution
+
+
+% 3.-Create a function getGaussianMixLogLikelihood(x, theta) that evaluates the
+% 2d Gaussian Mixture Log-likelihood for any number of components at a sample x 
+% with the vector theta of concatenated means mu, variances sigma2, and weights w
+% verify that it works the same as the previous function provided that the
+% number of components is 2
+
+
+% 4.-Fit a Gaussian Mixture to the simulated sample by maximizing the log-likelihood
+% Enforce in the maximization process the PSD of covariances and
+% that the sum of weights equals one
+
+
+% 5.-Use matlab function fitgmdist to fit a Gaussian Mixture to the simulated sample
+
+
+% 6.-Use your own EM algorithm to estimate the Gaussian mixture model. EM
+% is used in fitgmdist but the goal is to implement it on our own

@@ -6,7 +6,7 @@ function [ log_like ] = getMultiGaussianMixLogLikelihood( X, theta )
 
 if (isstruct(theta) == 0)
     
-    n = theta(1);
+    n = min(size(X)); % we suppose that the sample is *lager* than n_dims
     
     if (length(theta) == 2*n^3-1)
     
@@ -14,8 +14,7 @@ if (isstruct(theta) == 0)
         sigma = reshape(theta(2+n^2:1+n^2+n^3),n,n,n);
         w = theta(end-n:end);
         
-        theta = struct('n', n,...
-               'mu', mu,...
+        theta = struct('mu', mu,...
                'sigma', sigma,...
                'w', w);
     
@@ -27,7 +26,7 @@ if (isstruct(theta) == 0)
     
 end
 
-N = theta.n;
+N = length(theta.mu);
 
 like_ = zeros(size(X,1),1);
 

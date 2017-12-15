@@ -1,0 +1,36 @@
+% The goal of this exercise is creating a handwriting recognition
+% for a data set that contains handwritten digits between zero and nine 
+% using a one-vs-all logistic classifier.
+% The handwritten digits are characterized by a 20 x 20 pixel gray level
+% matrix that is stored in the lines of the file digits_data.csv. The label
+% corresponding to each digit is stored in digits_labels.csv; the digit "0"
+% is mapped to label "10" in this list.
+
+clear all
+close all
+
+% 1.- Read the data out of the files 'digits_data.csv' and 'digits_labels.csv' 
+% and create a design matrix X
+% in which the rows contain the pixel gray levels of each image. Each row
+% should contain 400 values. Create also a vector y containing the labels
+% associated to each picture
+
+% 2.- Create a function [h, display_array] = displayData(X, example_width)
+% % that displays 2D data in a grid out of the design matrix X that you 
+% constructed. It returns the figure handle h and the displayed array if requested.
+% Use this function to display 100 randomly chosen figures in the data set.
+
+% 3.- Construct a logistic classifier to find the "1"s in the dataset using 
+% the built-in matlab (glmfit) function. Compute the Type I,
+% Type II, and empirical errors.
+
+% 4.- One-vs-all logistic regression. Construct a one-vs-all logistic
+% classifier for the 10 figures. Compute the Type I, Type II, and empirical errors.
+
+% 5.- Create a misclassification matrix whose (i,j)th element
+% denotes the percentage of times in which the classifier assigns the 
+% figure with label i the label j.
+
+% 6.- Use the function displayData in point 2 in order to visualize the 
+% "7"s that get classified as a "9".
+

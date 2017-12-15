@@ -1,0 +1,73 @@
+% The objective of this exercise is constructing several classifiers for
+% anemia using the blood hemoglobin concentrations of the subjects under
+% consideration. 
+% X denotes the concentration of hemoglobin in grams/liter
+% Y=1 means "anemic", Y=0 means "healthy"
+% There are hence only two classes
+% Goal: classify data into two classes based on one feature
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% The dataset is simulated out of a Gaussian mixture as follows
+% Let {X|Y=1}~N(mu1, sigma12)
+% Let {X|Y=0}~N(mu0, sigma02)
+
+% Variables:
+% n sample size
+% mu1, mu0 means of the Gaussians used in the mixture
+% sigma12, sigma02 variances of the Gaussians used in the mixture
+% w1, w0 weights for each component of the mixture
+
+
+% 1.-Simulate a training data set (x_i, y_i) with n elements 
+% using Matlab binornd function
+
+% 2.-In the same figure plot:
+% (1)-A count density-normalized histogram of the total subjects sample
+% (The height of each bar is number of observations in bin / width of bin. 
+% The area (height * width) of each bar is the number of observations in the bin. 
+% The sum of the bar areas is the sample size)  
+% (2)-A count density-normalized histogram of the healthy subjects sample 
+% (3)-A count density-normalized histogram of the sick subjects sample
+% (4)-Corresponding weighted versions of the two Gaussians used in the generation
+% (5)-Corresponding weighted version of the Gaussian mixture distribution
+
+
+% 3.(1)-Assuming that the data generating process is known, construct and represent 
+% graphically the function eta that determines the Bayes classifier
+% 3.(2)-Determine the critical value of the Bayes classifier by determining the
+% hemoglobine concentration x_critical that yields eta(x_critical).
+% 3.(3)-Compute the Bayes' risk according to formulas from Lecture 2
+
+
+% 4.- Depict the critical value (decision boundary)
+% in the first figure
+
+
+% 5.- Compute the number of Type I and Type II errors and the
+% empirical risk of the Bayes classifier
+
+
+% 6.-Demonstrate that empirical risk of Bayes' classifier is an unbiased estimate
+% of true Bayes' risk
+
+% Practical classifiers
+
+% 7.- Construct the LDA classifier associated to the previous sample and 
+% compute the associated errors and classifier risk
+
+% 8.- Construct the logistic classifier associated to the previous sample and 
+% compute the associated errors and classifier risk.
+
+% 9.- Unsupervised learning. Now we do not assume 
+% that labels are observed anymore. The only sample which is available is 
+% the whole features sample x but we assume that the underlying
+% distribution is a Gaussian mixture with two components. Construct a
+% classifier based on fitting such a distribution to the observed features
+% using the technique introduced in Ex_1_1_GaussianMix_sol_withEM. 
+% You need both to use the MLE and EM techniques. Compute the associated errors 
+% and classifier empirical risk
