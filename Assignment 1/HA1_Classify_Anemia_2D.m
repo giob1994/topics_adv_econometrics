@@ -37,17 +37,24 @@ w0 = 1 - p_mixture;
 
 n = 100;
 
+bern = binornd(1, p_mixture, n, 1);
+
 mu1 = [mu_x1_1; mu_x2_1];
 Sigma1 = [sigma2_x1_1, sigma_x1x2_1; sigma_x1x2_1, sigma2_x2_1];
 mu0 = [mu_x1_0; mu_x2_0];
 Sigma0 = [sigma2_x1_0, sigma_x1x2_0; sigma_x1x2_0, sigma2_x2_0];
 
 ill_sample = mvnrnd(mu1, Sigma1, n);
+ill_sample = ill_sample(bern == 1, :);
 healthy_sample = mvnrnd(mu0, Sigma0, n);
+healthy_sample = healthy_sample(bern == 0, :);
 
 mixed_sample = [ill_sample; healthy_sample];
 sample_class = [ones(size(ill_sample, 1), 1); ...
                         zeros(size(healthy_sample, 1), 1)];
+
+n_component1 = size(ill_sample, 1);
+n_component0 = size(healthy_sample, 1);
                     
 % Figure limits:
 xl = [min(mixed_sample(:,1))-10, max(mixed_sample(:,1))+10];
@@ -175,11 +182,171 @@ hold off
 %% 7.- Construct the LDA classifier based on the training sample and 
 % compute the associated errors and classifier's empirical risk.
 
+w1_lda = n_component1/n;
+w0_lda = n_component0/n;
+
+mu1_lda = mean(ill_sample);
+mu0_lda = mean(healthy_sample);
+
+Sigma12_s = cov(ill_sample - mu1_lda);
+Sigma02_s = cov(healthy_sample - mu0_lda);
+Sigma_lda = (1 / (n-2)) * (Sigma12_s + Sigma02_s);
+                            
+delta_r_lda = @(X, w, mu, Sigma) X*(Sigma\mu')-1/2*(mu*(Sigma\mu'))+log(w);
+
+delta_ill = delta_r_lda(mixed_sample, w1_lda, mu1_lda, Sigma_lda);
+delta_healthy = delta_r_lda(mixed_sample, w0_lda, mu0_lda, Sigma_lda);
+
+LDA_ill = mixed_sample(delta_ill > delta_healthy, :);
+LDA_healthy = mixed_sample(delta_ill <= delta_healthy, :);
+
+% Type 1 errors:
+Type1_er_LDA = setdiff(LDA_ill, ill_sample, 'rows');
+% Type 2 errors:
+Type2_er_LDA = setdiff(LDA_healthy, healthy_sample, 'rows');
+
+% Empirical risk:
+LDA_emp_risk = (length(Type1_er_LDA) + length(Type2_er_LDA))/n;
+
+% Plot:
+figure(4)
+hold on
+title('LDA classifier error')
+
+plot(ill_sample(:,1), ill_sample(:,2), 'k+')
+plot(healthy_sample(:,1), healthy_sample(:,2), 'ko')
+plot(Type1_er_LDA(:,1), Type1_er_LDA(:,2), 'rx', 'MarkerSize', 12)
+plot(Type2_er_LDA(:,1), Type2_er_LDA(:,2), 'gx', 'MarkerSize', 12)
+xlim(xl)
+ylim(yl)
+
+bound_image = getDecisionBoundaryPlot(xl, yl, ...
+              @(x) delta_r_lda(x, w1_lda, mu1_lda, Sigma_lda) - ...
+                   delta_r_lda(x, w0_lda, mu0_lda, Sigma_lda), 1);
+colormap spring
+imagesc(xl, yl, bound_image, 'AlphaData', 0.2)
+
+grid on
+legend('ILL sample', 'HEALTHY sample', 'Type 1 errors', 'Type 2 errors', ...
+            'Location', 'best')
+% pbaspect([2 2 1])
+% legend('MIXED sample')
+hold off
+
+
 %% 8.- Construct the QDA classifier based on the training sample and
 % compute the associated errors and classifier's empirical risk.
 
+w1_qda = n_component1/n;
+w0_qda = n_component0/n;
+
+mu1_qda = mean(ill_sample);
+mu0_qda = mean(healthy_sample);
+
+Sigma12_qda = cov(ill_sample - mu1_qda);
+Sigma02_qda = cov(healthy_sample - mu0_qda);
+                            
+delta_r_qda = @(X, w, mu, Sigma) - 1/2*log(det(Sigma)) ...
+                                 - 1/2*sum((X-mu).*(Sigma\(X-mu)')', 2) ...
+                                 + log(w) ;
+
+delta_ill = delta_r_qda(mixed_sample, w1_qda, mu1_qda, Sigma12_qda);
+delta_healthy = delta_r_qda(mixed_sample, w0_qda, mu0_qda, Sigma02_qda);
+
+QDA_ill = mixed_sample(delta_ill > delta_healthy, :);
+QDA_healthy = mixed_sample(delta_ill <= delta_healthy, :);
+
+% Type 1 errors:
+Type1_er_QDA = setdiff(QDA_ill, ill_sample, 'rows');
+% Type 2 errors:
+Type2_er_QDA = setdiff(QDA_healthy, healthy_sample, 'rows');
+
+% Empirical risk:
+QDA_emp_risk = (length(Type1_er_QDA) + length(Type2_er_QDA))/n;
+
+% Plot:
+figure(4)
+hold on
+title('QDA classifier error')
+
+plot(ill_sample(:,1), ill_sample(:,2), 'k+')
+plot(healthy_sample(:,1), healthy_sample(:,2), 'ko')
+plot(Type1_er_QDA(:,1), Type1_er_QDA(:,2), 'rx', 'MarkerSize', 12)
+plot(Type2_er_QDA(:,1), Type2_er_QDA(:,2), 'gx', 'MarkerSize', 12)
+xlim(xl)
+ylim(yl)
+
+bound_image = getDecisionBoundaryPlot(xl, yl, ...
+              @(x) delta_r_qda(x, w1_qda, mu1_qda, Sigma12_qda) - ...
+                   delta_r_qda(x, w0_qda, mu0_qda, Sigma02_qda), 1);
+colormap spring
+imagesc(xl, yl, bound_image, 'AlphaData', 0.2)
+
+grid on
+legend('ILL sample', 'HEALTHY sample', 'Type 1 errors', 'Type 2 errors', ...
+            'Location', 'best')
+% pbaspect([2 2 1])
+% legend('MIXED sample')
+hold off
+
+
 %% 7.- Construct the Naive Bayes classifier based on the training sample and 
 % compute the associated errors and classifier's empirical risk.
+
+w1_nbc = n_component1/n;
+w0_nbc = n_component0/n;
+
+mu1_nbc = mean(ill_sample);
+mu0_nbc = mean(healthy_sample);
+
+Sigma12_nbc = diag(cov(ill_sample - mu1_nbc));
+Sigma02_nbc = diag(cov(healthy_sample - mu0_nbc));
+
+delta_r_nbc = @(X) ...
+     w1_nbc*normpdf(X(:,1), mu1_nbc(1), Sigma12_nbc(1)).* ... 
+            normpdf(X(:,2), mu1_nbc(2), Sigma12_nbc(2)) ...
+ ./ (w1_nbc*normpdf(X(:,1), mu1_nbc(1), Sigma12_nbc(1)).* ...
+            normpdf(X(:,2), mu1_nbc(2), Sigma12_nbc(2)) ... 
+   + w0_nbc*normpdf(X(:,1), mu0_nbc(1), Sigma02_nbc(1)).* ...
+            normpdf(X(:,2), mu0_nbc(2), Sigma02_nbc(2)));
+
+delta_ill = delta_r_nbc(mixed_sample);
+delta_healthy = 1 - delta_ill;
+
+NBC_ill = mixed_sample(delta_ill > delta_healthy, :);
+NBC_healthy = mixed_sample(delta_ill <= delta_healthy, :);
+
+% Type 1 errors:
+Type1_er_NBC = setdiff(NBC_ill, ill_sample, 'rows');
+% Type 2 errors:
+Type2_er_NBC = setdiff(NBC_healthy, healthy_sample, 'rows');
+
+% Empirical risk:
+NBC_emp_risk = (length(Type1_er_NBC) + length(Type2_er_NBC))/n;
+
+% Plot:
+figure(5)
+hold on
+title('Naive Bayes classifier error')
+
+plot(ill_sample(:,1), ill_sample(:,2), 'k+')
+plot(healthy_sample(:,1), healthy_sample(:,2), 'ko')
+plot(Type1_er_NBC(:,1), Type1_er_NBC(:,2), 'rx', 'MarkerSize', 12)
+plot(Type2_er_NBC(:,1), Type2_er_NBC(:,2), 'gx', 'MarkerSize', 12)
+xlim(xl)
+ylim(yl)
+
+bound_image = getDecisionBoundaryPlot(xl, yl, ...
+              @(x) delta_r_nbc(x)-1/2, 1);
+colormap spring
+imagesc(xl, yl, bound_image, 'AlphaData', 0.2)
+
+grid on
+legend('ILL sample', 'HEALTHY sample', 'Type 1 errors', 'Type 2 errors', ...
+            'Location', 'best')
+% pbaspect([2 2 1])
+% legend('MIXED sample')
+hold off
 
 %% 9.- Construct perceptron hyperplane classifier based on the training sample and 
 % compute the classifier's empirical risk.
@@ -188,18 +355,48 @@ hold off
 % Start by constructing a function that computes the empirical error of this
 % classifier as a function of beta.
 
-% 10.- Classify the data with a KNN classifier and compute the associated errors 
+h_sample = [ones(size(mixed_sample,1),1), mixed_sample];
+
+percept_emp_error = @(beta) sum((h_sample*beta(:) < 0) == sample_class)/n;
+
+beta_percept = ga(percept_emp_error, 3);
+
+% Plot:
+figure(5)
+hold on
+title('Perceptron classifier error')
+
+plot(ill_sample(:,1), ill_sample(:,2), 'k+')
+plot(healthy_sample(:,1), healthy_sample(:,2), 'ko')
+% plot(Type1_er_NBC(:,1), Type1_er_NBC(:,2), 'rx', 'MarkerSize', 12)
+% plot(Type2_er_NBC(:,1), Type2_er_NBC(:,2), 'gx', 'MarkerSize', 12)
+xlim(xl)
+ylim(yl)
+
+bound_image = getDecisionBoundaryPlot(xl, yl, ...
+              @(x) [ones(size(x,1),1), x]*beta_percept(:) < 0, 1);
+colormap spring
+imagesc(xl, yl, bound_image, 'AlphaData', 0.2)
+
+grid on
+legend('ILL sample', 'HEALTHY sample', 'Type 1 errors', 'Type 2 errors', ...
+            'Location', 'best')
+% pbaspect([2 2 1])
+% legend('MIXED sample')
+hold off
+
+%% 10.- Classify the data with a KNN classifier and compute the associated errors 
 % and classifier's empirical risk with 1, 5, and 10 neighbors
 
-% 11.- Classify the data using the unsupervised approach providing the number of classes 2
+%% 11.- Classify the data using the unsupervised approach providing the number of classes 2
 % (for that make use of the EM and MLE techniques implemented earlier; for the MLE 
 % technique make an improvement and guarantee PSD constraint by construction using the Cholesky
 % decomposition of covariance matrix), compute the associated errors and classifier's empirical risk.
 
-% 12.- Generate a new testing sample and compute the testing errors of all the above
+%% 12.- Generate a new testing sample and compute the testing errors of all the above
 % classifiers
 
-% 13.- Plot decision boundaries for the above used classifiers
+%% 13.- Plot decision boundaries for the above used classifiers
 % For that adapt the code in
 % http://www.peteryu.ca/tutorials/matlab/visualize_decision_boundaries 
 % for your needs
