@@ -231,8 +231,8 @@ mu1_em = theta_em.mu(1,:);
 mu2_em = theta_em.mu(2,:);
 sigma12_em = theta_em.sigma(:,:,1);
 sigma22_em = theta_em.sigma(:,:,1);
-w1_em = theta.w(1);
-w2_em = theta.w(2);
+w1_em = theta_em.w(1);
+w2_em = theta_em.w(2);
 
 
 figure(4)
