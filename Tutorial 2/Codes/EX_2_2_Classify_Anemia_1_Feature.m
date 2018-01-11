@@ -474,7 +474,7 @@ xlim([mean_mixture - 3*sqrt(sigma2_mixture),...
                 mean_mixture + 3*sqrt(sigma2_mixture)]);
 
 l_y = ylim;
-line([QDA_crit, QDA_crit], l_y, 'Color', 'r', 'LineWidth', 2)
+% line([QDA_crit, QDA_crit], l_y, 'Color', 'r', 'LineWidth', 2)
 line([threshold, threshold], l_y, 'Color', 'b', 'LineWidth', 2)
 
 legend('Sample - MIXED', 'QDA - Class=1', 'QDA - Class=0', ...
