@@ -526,6 +526,108 @@ disp(' ')
 
 rng(1)
 
+
+% MLE fitting:
+
+flike_min = @(theta) -getGaussianMixLogLikBicomp(mix_sample, theta);
+
+options = optimoptions(@fmincon,'Display','iter', 'TolX', 1.e-4);
+theta0 = [100, 200, 120, 120, 1/2, 1/2];
+Aeq = zeros(1, length(theta0));
+Aeq(end - 1) = 1;
+Aeq(end) = 1;
+beq = 1;
+Lbnd = [-Inf -Inf 0 0 0 0];
+Ubnd = [Inf Inf Inf Inf 1 1];
+
+[theta_mle, loglike1] = fmincon(flike_min, theta0, ...
+                            [], [], Aeq, beq, Lbnd, Ubnd, [], options);
+
+% find which component corresponds to the first simulated by looking at the
+% values of means
+[~, ind] = min(theta_mle(end-1:end));
+if (ind == 1)
+    mu1_mle     = theta_mle(2);
+    mu0_mle     = theta_mle(1);
+    sigma12_mle = theta_mle(4);
+    sigma02_mle = theta_mle(3);
+    w1_mle      = theta_mle(end);
+    w0_mle      = 1-w1_mle;
+else
+    mu1_mle     = theta_mle(1);
+    mu0_mle     = theta_mle(2);
+    sigma12_mle = theta_mle(3);
+    sigma02_mle = theta_mle(4);
+    w1_mle      = theta_mle(end-1);
+    w0_mle      = 1-w1_mle;
+end
+
+pdf_1_mle = makedist('Normal', mu1_mle, sqrt(sigma12_mle));
+pdf_0_mle = makedist('Normal', mu0_mle, sqrt(sigma02_mle));
+
+thresh_mle = thresh_f(mix_sample, pdf_1_mle, pdf_0_mle, ...
+                        mu1_mle, mu0_mle, w1_mle, w0_mle);
+                    
+% Type I errors:
+
+if mu0_mle > mu1_mle
+    typ1 = sum(healthy_sample_0 <= thresh_mle);
+else 
+    typ1 = sum(ill_sample_1 <= thresh_mle);
+end
+
+% Type II errors:
+
+if mu0_mle > mu1_mle
+    typ2 = sum(ill_sample_1 >= thresh_mle);
+else 
+    typ2 = sum(healthy_sample_0 >= thresh_mle);
+end
+
+emp_fitmle_risk = (typ1 + typ2)/n;
+
+disp(' ')
+disp(' MLE classifier:')
+disp(' ')
+disp([' MLE threshold:   ', num2str(thresh_mle)])
+disp([' MLE error:   ', num2str(typ1 + typ2)])
+disp([' MLE empirical risk:   ', num2str(emp_fitmle_risk)])
+disp(' ')
+
+
+figure(7)
+hold on
+
+h = histogram(mix_sample, 'Normalization', 'countdensity');
+alpha(h, 0.4)
+
+y1 = w1_mle*n*pdf(pdf_1_mle, x);
+y2 = w0_mle*n*pdf(pdf_0_mle, x);
+
+y_mixed = (y1 + y2);
+
+cmap_w = winter(3);
+cmap_h = autumn(3);
+
+plot(x, y1, 'LineWidth', 2, 'Color', cmap_h(2,:))
+plot(x, y2, 'LineWidth', 2, 'Color', cmap_w(2,:))
+plot(x, y_mixed, 'LineWidth', 2, 'Color', 'k', 'LineStyle', ':')
+
+l_y = ylim;
+line([thresh_mle, thresh_mle], l_y, 'Color', 'r', 'LineWidth', 2)
+line([threshold, threshold], l_y, 'Color', 'b', 'LineWidth', 2)
+
+legend('Sample - MIXED', ...
+       'GMModel MLE critical v.', 'Bayes critical v.', 'Location', 'best')
+title('GMModel MLE unsupervised classification')
+
+grid on
+
+hold off
+
+
+% GMModel fitting:
+
 k = 2;
 ops = statset('Display','final','MaxIter',1500,'TolFun',1e-5);
 
@@ -546,7 +648,7 @@ thresh_gm = thresh_f(mix_sample, pdf_1_gm, pdf_0_gm, ...
                     
 % Type I errors:
 
-if mu0 > mu1
+if mu0_fitgm > mu1_fitgm
     typ1 = sum(healthy_sample_0 <= thresh_gm);
 else 
     typ1 = sum(ill_sample_1 <= thresh_gm);
@@ -554,7 +656,7 @@ end
 
 % Type II errors:
 
-if mu0 > mu1
+if mu0_fitgm > mu1_fitgm
     typ2 = sum(ill_sample_1 >= thresh_gm);
 else 
     typ2 = sum(healthy_sample_0 >= thresh_gm);
@@ -563,24 +665,19 @@ end
 emp_fitgm_risk = (typ1 + typ2)/n;
 
 disp(' ')
-disp(' GMModel MLE classifier:')
+disp(' GMModel EM classifier:')
 disp(' ')
-disp([' MLE threshold:   ', num2str(thresh_gm)])
-disp([' MLE error:   ', num2str(typ1 + typ2)])
-disp([' MLE empirical risk:   ', num2str(emp_fitgm_risk)])
+disp([' EM threshold:   ', num2str(thresh_gm)])
+disp([' EM error:   ', num2str(typ1 + typ2)])
+disp([' EM empirical risk:   ', num2str(emp_fitgm_risk)])
 disp(' ')
 
 
-figure(7)
+figure(8)
 hold on
 
 h = histogram(mix_sample, 'Normalization', 'countdensity');
 alpha(h, 0.4)
-
-h1 = histogram(typ1, 'Normalization', 'countdensity');
-alpha(h1, 0.7)
-h2 = histogram(typ2, 'Normalization', 'countdensity');
-alpha(h2, 0.7)
 
 y1 = w1_fitgm*n*pdf(pdf_1_gm, x);
 y2 = w0_fitgm*n*pdf(pdf_0_gm, x);
@@ -598,16 +695,16 @@ l_y = ylim;
 line([thresh_gm, thresh_gm], l_y, 'Color', 'r', 'LineWidth', 2)
 line([threshold, threshold], l_y, 'Color', 'b', 'LineWidth', 2)
 
-legend('Sample - MIXED', 'MLE - Class=1', 'MLE - Class=0', ...
-       'GMModel MLE critical v.', 'Bayes critical v.', 'Location', 'best')
-title('GMModel MLE unsupervised classification')
+legend('Sample - MIXED', ...
+       'GMModel critical v.', 'Bayes critical v.', 'Location', 'best')
+title('GMModel unsupervised classification')
 
 grid on
 
 hold off
 
 
-% EM estimation:
+% EM fitting:
 
 precision = 0.000001;
 
@@ -630,7 +727,7 @@ thresh_em = thresh_f(mix_sample, pdf_1_em, pdf_0_em, ...
                     
 % Type I errors:
 
-if mu0 > mu1
+if mu0_em > mu1_em
     typ1 = sum(healthy_sample_0 <= thresh_em);
 else 
     typ1 = sum(ill_sample_1 <= thresh_em);
@@ -638,7 +735,7 @@ end
 
 % Type II errors:
 
-if mu0 > mu1
+if mu0_em > mu1_em
     typ2 = sum(ill_sample_1 >= thresh_em);
 else 
     typ2 = sum(healthy_sample_0 >= thresh_em);
@@ -655,16 +752,11 @@ disp([' EM empirical risk:   ', num2str(emp_em_risk)])
 disp(' ')
 
 
-figure(8)
+figure(9)
 hold on
 
 h = histogram(mix_sample, 'Normalization', 'countdensity');
 alpha(h, 0.4)
-
-h1 = histogram(typ1, 'Normalization', 'countdensity');
-alpha(h1, 0.7)
-h2 = histogram(typ2, 'Normalization', 'countdensity');
-alpha(h2, 0.7)
 
 y1 = w1_em*n*pdf(pdf_1_em, x);
 y2 = w0_em*n*pdf(pdf_0_em, x);
@@ -682,7 +774,7 @@ l_y = ylim;
 line([thresh_em, thresh_em], l_y, 'Color', 'r', 'LineWidth', 2)
 line([threshold, threshold], l_y, 'Color', 'b', 'LineWidth', 2)
 
-legend('Sample - MIXED', 'EM - Class=1', 'EM - Class=0', ...
+legend('Sample - MIXED', ...
        'EM critical v.', 'Bayes critical v.', 'Location', 'best')
 title('EM unsupervised classification')
 
