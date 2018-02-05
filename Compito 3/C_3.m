@@ -1,6 +1,6 @@
 % -------------------------------------------
 %
-%   Compito 2 - TAE
+%   Compito 3 - TAE
 %
 % -------------------------------------------
 
@@ -23,6 +23,7 @@ sigma_vec = [100; ones(n-1,1)];
 
 OLS_betas = zeros(MC_size, 2);
 
+stand_t_ratios = zeros(MC_size, 2);
 robust_t_ratios = zeros(MC_size, 2);
 
 for j = 1:MC_size
@@ -31,8 +32,15 @@ for j = 1:MC_size
     
     OLS_betas(j, :) = (X'*X) \ (X'*tmp_Y');
     
-    % Robust variance:
+    
     OLS_res = tmp_Y -  (OLS_betas(j, :) * X');
+    
+    % Standard variance:
+    OLS_stand_var = 1/(n-2) * (OLS_res*OLS_res') * (X'*X)^-1;
+    stand_t_ratios(j, :) = (OLS_betas(j, :) - [beta1, beta2]) ./ ... 
+                   [sqrt(OLS_stand_var(1,1)), sqrt(OLS_stand_var(2,2))];
+    
+    % Robust variance:
     S = zeros(2,2);
     for k = 1:n
         S = S + ( X(k,:)'*X(k,:)*OLS_res(k)^2 );
@@ -45,10 +53,9 @@ end
 
 %% Variance and t-ratios with STANDARD method:
 
-OLS_stand_var = (X'*X)^-1;
-
-stand_t_ratios = (OLS_betas - [beta1, beta2]) ./ ... 
-                  [sqrt(OLS_stand_var(1,1)), sqrt(OLS_stand_var(2,2))];
+% OLS_stand_var = (X'*X)^-1; % TODO
+% stand_t_ratios = (OLS_betas - [beta1, beta2]) ./ ... 
+%                  [sqrt(OLS_stand_var(1,1)), sqrt(OLS_stand_var(2,2))];
                     
 % jb_t_ratio_b1 = jbtest(stand_OLS_t_ratios(:,1));
 % jb_t_ratio_b2 = jbtest(stand_OLS_t_ratios(:,2));
