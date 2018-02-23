@@ -8,11 +8,13 @@ clear
 
 % Normal PDF for sample:
 % x, y, b1, b2, se
-loglike = @(z) log(1./(2*pi*z(:,5)) .* ...
-                exp(-(z(:,2) - z(:,3) - z(:,1).^z(:,4)).^2 ./ (2*z(:,5))));
+loglike = @(z) log(1./(2*pi*z(:,5)^2) .* ...
+                exp(-(z(:,2) - z(:,3) - z(:,1).^z(:,4)).^2 ./ (2*z(:,5)^2)));
             
 syms x y b1 b2 se
-logl(x,y,b1,b2,se) = log(1./(2*pi*se) * exp(-(y - b1 - x^b2)^2 / (2*se)));
+% logl(x,y,b1,b2,se) = log(1./(2*pi*se^2) * exp(-(y - b1 - x^b2)^2 / (2*se^2)));
+logl(x,y,b1,b2,se) = -0.5*log(se^2) - ...
+                        ((y - b1 - x.^b2)'*(y - b1 - x.^b2))/(2*se^2);
 
 pd_b1_1 = diff(logl, b1);
 pd_b1_2 = diff(pd_b1_1, b1);
@@ -42,7 +44,8 @@ for j = 1:1
 
     Y = transpose([beta1, beta2, 1] * [X, sqrt(sigma_e).*randn(n,1)]');
     
-    theta0 = [0.5, 0.2, 0.3];
+    theta0 = [1, 1/10, 0.1];
+    theta0_ll = theta0;
     
     diff = 1;
     it = 0;
@@ -82,13 +85,22 @@ for j = 1:1
 %                             pd_b2se(X(k,2), Y(k), theta0(1), theta0(2), theta0(3)), ...
 %                             pd_se_2(X(k,2), Y(k), theta0(1), theta0(2), theta0(3));]);
         end
+        
+%         llike = @(th) log( 1./(2*pi*th(3)) .* ...
+%                 exp(- ((Y - X*th(1:2)')'*(Y - X*th(1:2)')) ./ (2*th(3))));
+%             
+%         D1_ll = gradest(llike, theta0);    
+%         H_ll = hessian(llike, theta0);
+        
         toc
 
         theta = transpose(theta0(:) - (H \ D1(:)));
+%         theta_ll = transpose(theta0_ll(:) - (H_ll \ D1_ll(:)));
 %         thetasym = transpose(theta0(:) - (Hsym \ D1sym(:)));
         
         diff = norm(theta - theta0);
         theta0 = theta;
+%         theta0_ll = theta_ll;
         
         it = it + 1;
        
