@@ -25,6 +25,17 @@ y_fashion = y_fashion(1:5000, :);
 
 n_fashion = size(X_fashion, 1);
 p_fashion = size(X_fashion, 2);
+
+% % Import epilepsy dataset:
+% 
+% load('epilepsy_data.mat')
+% load('epilepsy_labels.mat')
+% 
+% X_epilepsy = X_epilepsy(1:5000, :);
+% y_epilepsy = y_epilepsy(1:5000, :);
+% 
+% n_epilepsy = size(X_epilepsy, 1);
+% p_epilepsy = size(X_epilepsy, 2);
  
 % We are using display_network from the autoencoder code
 % displayData(X_fashion(1:100, :));
@@ -41,6 +52,27 @@ end
 Y_fashion = zeros(n_fashion, num_labels);
 for j = 1:n_fashion
     Y_fashion(j, y_fashion(j)+1) = 1;
+end
+
+%% ANN + test training algorithm:
+
+train_alg = { 'trainbfg', 'trainrp', 'trainscg', ...
+                'traincgb', 'traincgf', 'traincgp', 'trainoss', 'traingdx', ...
+                'traingdm', 'traingd'};
+ 
+NN_mnist_error_alg = zeros(length(train_alg),1);
+NN_mnist_time_alg = zeros(length(train_alg),1);
+            
+for k = 1:length(train_alg)
+    
+    net = feedforwardnet(25, char(train_alg(k)));
+    tic
+    net = train(net, X_mnist',  Y_mnist', [], [], [], 'useParallel');
+    NN_mnist_time_alg(k) = toc;
+    [~, NN_class] = max(net(X_mnist')', [], 2);
+    
+    NN_mnist_error_alg(k) = sum(NN_class ~= y_mnist)/n_mnist;
+    
 end
 
 %% PCA + ANN:
