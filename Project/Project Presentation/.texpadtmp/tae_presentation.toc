@@ -7,5 +7,5 @@
 \beamer@subsectionintoc {2}{1}{Principal Component Analysis}{11}{0}{2}
 \beamer@subsectionintoc {2}{2}{Convolutional Neural Networks}{15}{0}{2}
 \beamer@sectionintoc {3}{Results}{20}{0}{3}
-\beamer@subsectionintoc {3}{1}{PCA}{21}{0}{3}
-\beamer@subsectionintoc {3}{2}{CNN}{24}{0}{3}
+\beamer@subsectionintoc {3}{1}{PCA + 1D NN}{21}{0}{3}
+\beamer@subsectionintoc {3}{2}{CNN}{27}{0}{3}

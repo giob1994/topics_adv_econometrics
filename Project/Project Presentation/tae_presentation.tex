@@ -7,6 +7,7 @@
 \usepackage{tabularx,colortbl} % Advanced table configurations
 \usepackage{fontspec}
 \usepackage{xcolor}
+\usepackage{subcaption}
 
 \newcommand{\gray}{\rowcolor[gray]{.90}} % Custom highlighting for the work experience and education sections
 
@@ -229,7 +230,14 @@
 
 \section{Results}
 
-\subsection{PCA}
+\subsection{PCA + 1D NN}
+
+\begin{frame}[standout]
+	\centering
+	\textit{Results}\\
+	\vspace{2em}
+	\textbf{PCA + 1D NN}
+\end{frame}
 
 \begin{frame}
 \frametitle{Results - PCA + 1D Neural Network - MNIST}
@@ -284,6 +292,33 @@
 \end{frame}
 
 \begin{frame}
+\frametitle{A Trick - 2D Fourier Transform}
+	For the Fashion MNIST dataset, directly applying PCA and a fully-connected 1D neural network produces \textit{very bad results}. The final test error for all combinations is around \textbf{70\%}. \\
+	\vspace{1em}
+	A simple trick allows to reduce greatly the error: pre-treat the dataset with a 2D Fourier Transform on the images to move to the frequency domain. \\
+	\vspace{1em}
+	\textit{We loose the spatial information, but we reduce the test error by up to \textbf{30} percentage points!}
+\end{frame}
+
+\begin{frame}
+\frametitle{A Trick - 2D Fourier Transform}
+	\begin{figure}[hbt]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{fashion_raw}
+  \caption{~}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{fashion_ft2}
+  \caption{~}
+\end{subfigure}
+\vspace{1em}
+\caption{Some images from the Fashion MNIST dataset (a), and their respective frequency decomposition through the 2D Fourier Transform (b).}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
 \frametitle{Results - PCA + 1D Neural Network - Fashion MNIST}
 \begin{table}[hbt]
   \begin{tabular}{|cc|l|c|c|}
@@ -310,6 +345,13 @@
 \end{frame}
 
 \subsection{CNN}
+
+\begin{frame}[standout]
+	\centering
+	\textit{Results}\\
+	\vspace{2em}
+	\textbf{CNN}
+\end{frame}
 
 \begin{frame}
 \frametitle{Results - CNN - MNIST}
