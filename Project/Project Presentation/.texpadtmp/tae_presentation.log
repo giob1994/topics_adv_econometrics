@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2017.1.2)  28 FEB 2018 12:20
+This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2017.1.2)  28 FEB 2018 12:43
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1006,7 +1006,7 @@ Package: colortbl 2012/02/13 v1.0a Color table columns (DPC)
 \minrowclearance=\skip77
 )
 \c@saveenumi=\count275
- (/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.aux)
+ (/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.aux)
 \openout1 = `tae_presentation.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 44.
@@ -1081,7 +1081,7 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 44.
 LaTeX Info: Redefining \pageref on input line 44.
 LaTeX Info: Redefining \nameref on input line 44.
- (/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.out) (/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.out)
+ (/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.out) (/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.out)
 \@outlinefile=\write5
 \openout5 = `tae_presentation.out'.
 
@@ -1145,13 +1145,13 @@ LaTeX Info: Redefining \includegraphics on input line 44.
 *** you should *not* be loading the inputenc package
 *** XeTeX expects the source to be in UTF8 encoding
 *** some features of other encodings may conflict, resulting in poor output.
-(/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.nav)
+(/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.nav)
 Overfull \vbox (44.87192pt too high) detected at line 46
  []
 
 [1
 
-] (/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.toc) [2
+] (/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.toc) [2
 
 ]
 LaTeX Font Info:    Font shape `EU1/lmss/m/it' in size <10.95> not available
@@ -1199,7 +1199,7 @@ Overfull \vbox (28.57858pt too high) detected at line 107
 
 [8
 
-] (/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.toc) [9
+] (/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.toc) [9
 
 ] [10
 
@@ -1245,7 +1245,7 @@ File: diag_3.pdf Graphic file (type QTm)
 File: diag_4.pdf Graphic file (type QTm)
  <use  "diag_4.pdf" > [19
 
-] (/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.toc) [20
+] (/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.toc) [20
 
 ]
 *************************************************
@@ -1333,14 +1333,14 @@ Overfull \hbox (1.51329pt too wide) in paragraph at lines 350--350
 *************************************************
 * fontspec warning: "addfontfeatures-ignored"
 * 
-* \addfontfeature(s) ignored on line 370; it cannot be used with a font that
+* \addfontfeature(s) ignored on line 369; it cannot be used with a font that
 * wasn't selected by a fontspec command.
 * 
 * The current font is "\EU1/lmss/m/n/8 ".
 * The requested feature is "Numbers={Monospaced}".
 *************************************************
 
-Overfull \hbox (1.51329pt too wide) in paragraph at lines 370--370
+Overfull \hbox (1.51329pt too wide) in paragraph at lines 369--369
  [] 
  []
 
@@ -1358,20 +1358,20 @@ Overfull \hbox (1.51329pt too wide) in paragraph at lines 370--370
 \tf@snm=\write8
 \openout8 = `tae_presentation.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 377.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 377.
- (/Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 377.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 377.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 377.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 376.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 376.
+ (/Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.aux)
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 376.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 376.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 376.
  ) 
 Here is how much of TeX's memory you used:
  35988 strings out of 493591
- 709547 string characters out of 6143547
+ 709471 string characters out of 6143547
  705450 words of memory out of 5000000
  38793 multiletter control sequences out of 15000+600000
  9113 words of font info for 54 fonts, out of 8000000 for 9000
  1347 hyphenation exceptions out of 8191
  71i,13n,83p,10405b,689s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on /Users/giovannib/Documents/MSci Economics/Konstanz/Topics of Advanced Econometrics/Project/.texpadtmp/tae_presentation.pdf (27 pages).
+Output written on /Users/giovannib/Documents/MATLAB/topics_adv_econometrics/Project/Project Presentation/.texpadtmp/tae_presentation.pdf (27 pages).

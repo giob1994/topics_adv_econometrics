@@ -127,8 +127,8 @@
 	PCA is widely used as a projection technique to reduce the dimensionality of data. \\ The algorithm is straightforward:
 	\begin{enumerate}
 		\item Demean the data: $\overline{X} = X - m(X)$
-		\item Compute the covariance matrix: \[ C = \frac{1}{N}\,X\,X^{\top}\]
-		\item Find the eigenvectors (and eigenvalues) matrices, $V$ and $D$: \[ V^{-1}\,C\,V = D \]
+		\item Compute the covariance matrix: \[ C = \frac{1}{N}\,\overline{X}\,\overline{X}^{\top}\]
+		\item Find the eigenvectors (and eigenvalues) matrices, $V$ and $D$: \[ V^{\,-1}\,C\,V = D \]
 		\item Order the eigenvectors by highest associated eigenvalue and project the data $X$ onto the first $K$ components: \[ Z = \overline{X}\,V(1:K) \]
 	\end{enumerate}
 \end{frame}
@@ -357,7 +357,6 @@
     \# & CNN Architecture & Training Error & Test Error\\
     \hline
     \hline
-       
     1 & 2D(5x5,4)   &             0.16287    &  0.179     \\
     2 & 2D(5x5,8)   &            0.16225     & 0.168     \\
    3 & 2D(3x3,4)-BN   &           0.1035      &0.148   \\  
