@@ -7,6 +7,7 @@ z = x;
 
 figure
 plot3(x,y,z,'o')
+grid on
 
 out = PCA([x,y,z], 2);
 

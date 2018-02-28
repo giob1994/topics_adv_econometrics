@@ -6,6 +6,9 @@
 clear;
 close all;
 
+sig     = @(z) 1./(1 + exp(-z));
+sig_d1  = @(z) sig(z) .* (1-sig(z));
+
 %% 1.- Read the data out of the mentioned files 'digits_data.csv' and 'digits_labels.csv' 
 % and create a design matrix X
 % in which the rows contain the pixel gray levels of each image. Each row
@@ -45,9 +48,6 @@ lambda = 0.02;
 % definition of the derivative. Perform this check using the weights 
 % Theta1 and Theta2 stored in the file 'paramsNN.mat'. It is enough to
 % compute the first 100 elements
-
-sig     = @(z) 1./(1 + exp(-z));
-sig_d1  = @(z) sig(z) .* (1-sig(z));
 
 hidden_params = reshape(nn_params(1:input_layer_size*(hidden_layer_size-1)), ...
                         hidden_layer_size-1, input_layer_size);
@@ -112,6 +112,8 @@ while diff > 10^-7
     params0 = params1;
     
 end
+
+% options = optimoptions(--- 'GradObj')
 
 %% 5.- Use the NN obtained to classify the digits in 'digits_data.csv'
 % Compute subsequently the empirical error of the classifier and compare the 
