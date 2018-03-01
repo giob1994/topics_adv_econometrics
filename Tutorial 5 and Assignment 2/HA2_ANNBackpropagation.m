@@ -49,39 +49,51 @@ lambda = 0.02;
 % Theta1 and Theta2 stored in the file 'paramsNN.mat'. It is enough to
 % compute the first 100 elements
 
-hidden_params = reshape(nn_params(1:input_layer_size*(hidden_layer_size-1)), ...
-                        hidden_layer_size-1, input_layer_size);
-output_params = reshape(nn_params((input_layer_size*(hidden_layer_size-1) + 1):end), ...
-                        num_labels, hidden_layer_size);
-                    
-a1 = [ones(size(X,1), 1), X];
-a2 = sig([ones(size(X,1), 1), a1 * hidden_params']);
-y_out = sig(a2 * output_params');
+test_grad = zeros(100,1);
 
-for I = 1:10
-    for J = 1:10
-        
-        Temp = 0;
-        
-        % For every obs. in the sample:                
-        for i = 1:n
-            % For every output label:
-            for k = 1:num_labels
-
-                dAk = sig_d1( [1, sig([1, X(i,:)] * hidden_params')] * output_params(k,:)' ) * ...
-                        output_params(k,J) * sig_d1( [1, X(i,:)] * hidden_params(J,:)' ) * X(i,I);
-                    
-                Temp = Temp + ...
-                       Y(n, k) * 1/(y_out(n,k)) * dAk - ...
-                       (1 - Y(n,k)) * (1/(1 - y_out(n,k)) * dAk);
-
-            end 
-        end
-        
-        dJ_dtheta(I,J) =  -1/n * Temp + lambda/n *  hidden_params(I,J);
+for I = 1:100
     
-    end
-end
+    nn_params_delta = nn_params;
+    nn_params_delta(I) = nn_params(I) + 0.0001;
+    [J__, ~, ~] = nnminuslogLikelihood(nn_params_delta, input_layer_size, ...
+                            hidden_layer_size, num_labels, X, y, lambda);
+    test_grad(I) = (J__ - J) / (0.0001);                   
+    
+end 
+
+% hidden_params = reshape(nn_params(1:input_layer_size*(hidden_layer_size-1)), ...
+%                         hidden_layer_size-1, input_layer_size);
+% output_params = reshape(nn_params((input_layer_size*(hidden_layer_size-1) + 1):end), ...
+%                         num_labels, hidden_layer_size);
+%                     
+% a1 = [ones(size(X,1), 1), X];
+% a2 = sig([ones(size(X,1), 1), a1 * hidden_params']);
+% y_out = sig(a2 * output_params');
+% 
+% for I = 1:10
+%     for J = 1:10
+%         
+%         Temp = 0;
+%         
+%         % For every obs. in the sample:                
+%         for i = 1:n
+%             % For every output label:
+%             for k = 1:num_labels
+% 
+%                 dAk = sig_d1( [1, sig([1, X(i,:)] * hidden_params')] * output_params(k,:)' ) * ...
+%                         output_params(k,J) * sig_d1( [1, X(i,:)] * hidden_params(J,:)' ) * X(i,I);
+%                     
+%                 Temp = Temp + ...
+%                        Y(n, k) * 1/(y_out(n,k)) * dAk - ...
+%                        (1 - Y(n,k)) * (1/(1 - y_out(n,k)) * dAk);
+% 
+%             end 
+%         end
+%         
+%         dJ_dtheta(I,J) =  -1/n * Temp + lambda/n *  hidden_params(I,J);
+%     
+%     end
+% end
 
 %% 4.- Use the function nnminuslogLikelihood to train the neural network to the classification
 % of the digits in 'digits_data.csv'. Use the weights 

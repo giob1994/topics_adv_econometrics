@@ -154,12 +154,12 @@
 \begin{frame}
 \frametitle{Architecture}
 	\vspace{1em}
-	PCA sizes \\
+	Percentages of explained variance: \\
 	\begin{itemize}
-		\item 10
-		\item 25
-		\item 50
-		\item 100
+		\item 50\%
+		\item 75\%
+		\item 85\%
+		\item 95\%
 	\end{itemize}
 	Fully connected NN architectures\\
 	\begin{itemize}
@@ -293,7 +293,7 @@
 
 \begin{frame}
 \frametitle{A Trick - 2D Fourier Transform}
-	For the Fashion MNIST dataset, directly applying PCA and a fully-connected 1D neural network produces \textit{very bad results}. The final test error for all combinations is around \textbf{70\%}. \\
+	For the Fashion MNIST dataset, directly applying PCA and a fully-connected 1D neural network produces \textit{very bad results}. Training error is much higher than in MNIST/notMNIST, and test error for all combinations is always around \textbf{70\%}. \\
 	\vspace{1em}
 	A simple trick allows to reduce greatly the error: pre-treat the dataset with a 2D Fourier Transform on the images to move to the frequency domain. \\
 	\vspace{1em}
