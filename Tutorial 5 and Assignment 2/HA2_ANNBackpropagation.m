@@ -51,7 +51,7 @@ lambda = 0.02;
 
 test_grad = zeros(100,1);
 
-for I = 1:100
+for I = 1:10
     
     nn_params_delta = nn_params;
     nn_params_delta(I) = nn_params(I) + 0.0001;
