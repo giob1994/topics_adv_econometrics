@@ -205,8 +205,7 @@ for PC_dim = PCA_sizes
 
 end
 
-figure(figj)
-figj = figj+1;
+fig = figure('name', 'PCA+1DNN: MNIST','pos',[10 10 900 900]);
 for l = 1:PN
 
     misclass = zeros(10, 10);
@@ -222,8 +221,11 @@ for l = 1:PN
     subplot(floor(PN/6), PN/floor(PN/6), l);
     imagesc(misclass)
     pbaspect([2 2 1])
+    ax = gca;
+    ax.FontSize = 12;
 
 end
+print('PCA_1DNN_MNIST', '-dpng', '-r200');
 % title('CNN classifier - Fashion - Misclassification matrix')
 
 results_PCA_ANN_mnist = ...
@@ -320,8 +322,7 @@ for PC_dim = PCA_sizes
 
 end
 
-figure(figj)
-figj = figj+1;
+fig = figure('name', 'PCA+1DNN: notMNIST','pos',[10 10 900 900]);
 for l = 1:PN
 
     misclass = zeros(10, 10);
@@ -339,6 +340,7 @@ for l = 1:PN
     pbaspect([2 2 1])
 
 end
+print('PCA_1DNN_notMNIST', '-dpng', '-r200');
 % title('CNN classifier - Fashion - Misclassification matrix')
 
 
@@ -432,8 +434,7 @@ for PC_dim = PCA_sizes
 
 end
 
-figure(figj)
-figj = figj+1;
+fig = figure('name', 'PCA+1DNN: Fashion MNIST','pos',[10 10 900 900]);
 for l = 1:PN
 
     misclass = zeros(10, 10);
@@ -451,6 +452,7 @@ for l = 1:PN
     pbaspect([2 2 1])
 
 end
+print('PCA_1DNN_Fashion_MNIST', '-dpng', '-r200');
 % title('CNN classifier - Fashion - Misclassification matrix')
 
 
@@ -591,7 +593,7 @@ end
 
 % Plot
 
-figure(5)
+fig = figure('name', 'CNN: MNIST','pos',[10 10 900 900]);
 for l = 1:length(CNN_layers)
 
     misclass = zeros(10, 10);
@@ -610,6 +612,7 @@ for l = 1:length(CNN_layers)
     pbaspect([2 2 1])
 
 end
+print('CNN_MNIST', '-dpng', '-r200');
 % title('CNN classifier - MNIST - Misclassification matrix')
 
 results_CNN_mnist = ...
@@ -675,7 +678,7 @@ end
 
 % Plot
 
-figure(5)
+fig = figure('name', 'CNN: notMNIST','pos',[10 10 900 900]);
 for l = 1:length(CNN_layers)
 
     misclass = zeros(10, 10);
@@ -694,6 +697,7 @@ for l = 1:length(CNN_layers)
     pbaspect([2 2 1])
 
 end
+print('CNN_notMNIST', '-dpng', '-r200');
 % title('CNN classifier - notMNIST - Misclassification matrix')
 
 results_CNN_notMnist = ...
@@ -763,7 +767,7 @@ end
 
 % Plot
 
-figure(5)
+fig = figure('name', 'CNN: Fashion MNIST','pos',[10 10 900 900]);
 for l = 1:length(CNN_layers)
 
     misclass = zeros(10, 10);
@@ -782,6 +786,7 @@ for l = 1:length(CNN_layers)
     pbaspect([2 2 1])
 
 end
+print('CNN_Fashion_MNIST', '-dpng', '-r200');
 % title('CNN classifier - Fashion - Misclassification matrix')
 
 results_CNN_fashion = ...
